@@ -1,17 +1,188 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Поменяй свой знак зодиака</title>
   <meta name="description" content="Заполни данные и крути колесо судьбы — узнай новый знак зодиака." />
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- Analytics / AdSense placeholders:
+       Вставляй сюда код Google Analytics / AdSense если требуется после публикации -->
 </head>
 <body>
-  <!-- Full HTML exactly as provided earlier -->
-<!-- Due to message length constraints, full HTML content was provided in the chat above.
-Please paste full HTML manually if needed. -->
-<script src="script.js" defer></script>
+  <main id="app" class="page">
+    <!-- Hero / Screen 1 -->
+    <section class="screen hero active" id="screen-hero">
+      <div class="stars" aria-hidden="true"></div>
+      <div class="container">
+        <h1 class="title">Поменяй свой знак зодиака</h1>
+        <p class="subtitle">Заполни данные и крути колесо судьбы</p>
+
+        <div class="ad ad-small" id="ad-1">
+          <!-- Рекламный блок №1 (маленький адаптивный) -->
+          <div class="ad-placeholder">Реклама — блок №1</div>
+        </div>
+
+        <button class="btn btn-primary btn-cta" id="to-form">Начать</button>
+      </div>
+    </section>
+
+    <!-- Form / Screen 2 -->
+    <section class="screen form-screen" id="screen-form">
+      <div class="container card">
+        <label class="field">
+          <span class="label-text">Имя</span>
+          <input type="text" id="input-name" placeholder="Как тебя зовут" maxlength="30" />
+        </label>
+
+        <label class="field">
+          <span class="label-text">Дата рождения</span>
+          <input type="text" id="input-bdate" placeholder="dd.mm.yyyy" inputmode="numeric" />
+        </label>
+
+        <label class="field">
+          <span class="label-text">Знак зодиака</span>
+          <select id="input-zodiac">
+            <option value="">(автоопределить)</option>
+            <option value="Aries">Овен</option>
+            <option value="Taurus">Телец</option>
+            <option value="Gemini">Близнецы</option>
+            <option value="Cancer">Рак</option>
+            <option value="Leo">Лев</option>
+            <option value="Virgo">Дева</option>
+            <option value="Libra">Весы</option>
+            <option value="Scorpio">Скорпион</option>
+            <option value="Sagittarius">Стрелец</option>
+            <option value="Capricorn">Козерог</option>
+            <option value="Aquarius">Водолей</option>
+            <option value="Pisces">Рыбы</option>
+          </select>
+        </label>
+
+        <div class="ad ad-small" id="ad-2">
+          <!-- Рекламный блок №2 -->
+          <div class="ad-placeholder">Реклама — блок №2</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="start-wheel">ГОТОВО</button>
+          <button class="btn btn-ghost" id="back-hero">Назад</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wheel preview / Screen 3 -->
+    <section class="screen wheel-screen" id="screen-wheel">
+      <div class="container">
+        <div class="wheel-wrap card">
+          <p class="hint">Свайпни или нажми для вращения</p>
+
+          <div class="wheel-viewport" id="wheel-viewport">
+            <div class="wheel-track" id="wheel-track" role="list" aria-label="Колесо знаков">
+              <!-- items will be injected by JS -->
+            </div>
+            <div class="wheel-center-pointer" aria-hidden="true">▼</div>
+          </div>
+
+          <div class="ad ad-wide" id="ad-3">
+            <!-- Рекламный баннер №3 — широкий -->
+            <div class="ad-placeholder">Реклама — блок №3 (широкий)</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="spin-btn">Крутить</button>
+          <button class="btn btn-ghost" id="back-form">Изменить данные</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Spin animation screen / Screen 4 -->
+    <section class="screen spin-screen" id="screen-spin">
+      <div class="container">
+        <div class="spin-card card">
+          <div class="spin-icon">🔮</div>
+          <p class="spin-text">Колесо вращается...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Result / Screen 5 -->
+    <section class="screen result-screen" id="screen-result">
+      <div class="container card result-card">
+        <h2 class="result-name" id="result-name">Имя</h2>
+
+        <div class="result-top">
+          <div class="result-sign" id="result-sign">♈</div>
+          <div class="result-title">Звёзды говорят ваш новый знак зодиака:</div>
+          <div class="result-zodiac" id="result-zodiac">Овен</div>
+        </div>
+
+        <p class="result-desc" id="result-desc">Короткое описание результата появится здесь.</p>
+
+        <div class="ad ad-inline" id="ad-4">
+          <!-- Рекламный блок №4 — в контенте -->
+          <div class="ad-placeholder">Реклама — блок №4</div>
+        </div>
+
+        <p class="more-text">Ещё немного текста / совет...</p>
+
+        <div class="ask-repeat">
+          <p class="question">Хотите испытать удачу ещё раз?</p>
+
+          <div class="ad ad-small" id="ad-5">
+            <!-- Рекламный блок №5 — небольшой над кнопками -->
+            <div class="ad-placeholder">Реклама — блок №5</div>
+          </div>
+
+          <div class="repeat-actions">
+            <button class="btn btn-primary" id="repeat-yes">ДА</button>
+            <button class="btn btn-ghost" id="repeat-no">НЕТ</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final if NO / Screen 7B -->
+    <section class="screen final-screen" id="screen-final">
+      <div class="container card final-card">
+        <h2 id="final-name">Пока!</h2>
+        <div id="final-block">
+          <div class="final-sign" id="final-sign">♈</div>
+          <div class="final-zodiac" id="final-zodiac">Овен</div>
+          <p id="final-desc">Описание результата и советы.</p>
+        </div>
+
+        <div class="ad ad-inline" id="ad-6">
+          <div class="ad-placeholder">Реклама — блок №6</div>
+        </div>
+
+        <p class="final-more">Доп. текст: советы, рекомендации</p>
+
+        <div class="ad ad-recs" id="ad-7">
+          <div class="ad-placeholder">Реклама — блок №7 (recommendations)</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="final-back">На главную</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <nav class="footer-links">
+          <a href="#" id="policy-link">Политика конфиденциальности</a>
+          <a href="#" id="contacts-link">Контакты</a>
+          <a href="#" id="offer-link">Оферта</a>
+        </nav>
+      </div>
+    </footer>
+  </main>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
