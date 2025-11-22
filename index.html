@@ -10,17 +10,17 @@
 </head>
 <body>
   <main id="app" class="page">
+
     <!-- Stars background -->
     <div class="stars" id="stars" aria-hidden="true"></div>
 
-    <!-- Hero / Screen 1 -->
+    <!-- === SCREEN 1: HERO === -->
     <section class="screen hero active" id="screen-hero">
       <div class="container">
         <h1 class="title">Поменяй свой знак зодиака</h1>
         <p class="subtitle">Заполни данные и крути колесо судьбы</p>
 
         <div class="ad ad-small" id="ad-1">
-          <!-- Рекламный блок №1 (маленький адаптивный) -->
           <div class="ad-placeholder">Реклама — блок №1</div>
         </div>
 
@@ -28,7 +28,7 @@
       </div>
     </section>
 
-    <!-- Form / Screen 2 -->
+    <!-- === SCREEN 2: FORM === -->
     <section class="screen form-screen" id="screen-form">
       <div class="container card">
         <label class="field">
@@ -61,7 +61,6 @@
         </label>
 
         <div class="ad ad-small" id="ad-2">
-          <!-- Рекламный блок №2 -->
           <div class="ad-placeholder">Реклама — блок №2</div>
         </div>
 
@@ -71,25 +70,21 @@
       </div>
     </section>
 
-    <!-- Wheel preview / Screen 3 -->
+    <!-- === SCREEN 3: WHEEL (with animation ON SAME SCREEN) === -->
     <section class="screen wheel-screen" id="screen-wheel">
       <div class="container">
         <div class="wheel-wrap card">
           <p class="hint">Свайпни или нажми для вращения</p>
 
-          <div class="wheel-viewport" id="wheel-viewport" role="application" aria-label="Колесо знаков">
-            <div class="wheel-track" id="wheel-track" role="list" aria-hidden="false">
-              <!-- items injected by JS -->
-            </div>
-            <div class="wheel-center-pointer" aria-hidden="true">▼</div>
-            <!-- arc mask for soft edges -->
-            <div class="wheel-mask-left" aria-hidden="true"></div>
-            <div class="wheel-mask-right" aria-hidden="true"></div>
+          <div class="wheel-viewport" id="wheel-viewport">
+            <div class="wheel-track" id="wheel-track"></div>
+            <div class="wheel-center-pointer">▼</div>
+            <div class="wheel-mask-left"></div>
+            <div class="wheel-mask-right"></div>
           </div>
 
           <div class="ad ad-wide" id="ad-3">
-            <!-- Рекламный баннер №3 — широкий -->
-            <div class="ad-placeholder">Реклама — блок №3 (широкий)</div>
+            <div class="ad-placeholder">Реклама — блок №3</div>
           </div>
         </div>
 
@@ -99,41 +94,27 @@
       </div>
     </section>
 
-    <!-- Spin animation screen / Screen 4 -->
-    <section class="screen spin-screen" id="screen-spin">
-      <div class="container">
-        <div class="spin-card card">
-          <div class="spin-icon">🔮</div>
-          <p class="spin-text">Колесо вращается...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Result / Screen 5 -->
+    <!-- === SCREEN 5: RESULT === -->
     <section class="screen result-screen" id="screen-result">
       <div class="container card result-card">
         <h2 class="result-name" id="result-name">Имя</h2>
 
         <div class="result-top">
           <div class="result-sign" id="result-sign">♈</div>
-          <div class="result-title">Звёзды говорят ваш новый знак зодиака:</div>
+          <div class="result-title">Ваш новый знак зодиака:</div>
           <div class="result-zodiac" id="result-zodiac">Овен</div>
         </div>
 
-        <p class="result-desc" id="result-desc">Короткое описание результата появится здесь.</p>
+        <p class="result-desc" id="result-desc"></p>
 
         <div class="ad ad-inline" id="ad-4">
-          <!-- Рекламный блок №4 — в контенте -->
           <div class="ad-placeholder">Реклама — блок №4</div>
         </div>
-
-        <p class="more-text">Ещё немного текста / совет...</p>
 
         <div class="ask-repeat">
           <p class="question">Хотите испытать удачу ещё раз?</p>
 
           <div class="ad ad-small" id="ad-5">
-            <!-- Рекламный блок №5 — небольшой над кнопками -->
             <div class="ad-placeholder">Реклама — блок №5</div>
           </div>
 
@@ -145,24 +126,23 @@
       </div>
     </section>
 
-    <!-- Final if NO / Screen 7B -->
+    <!-- === SCREEN 6: FINAL === -->
     <section class="screen final-screen" id="screen-final">
       <div class="container card final-card">
         <h2 id="final-name">Пока!</h2>
+
         <div id="final-block">
           <div class="final-sign" id="final-sign">♈</div>
           <div class="final-zodiac" id="final-zodiac">Овен</div>
-          <p id="final-desc">Описание результата и советы.</p>
+          <p id="final-desc"></p>
         </div>
 
         <div class="ad ad-inline" id="ad-6">
           <div class="ad-placeholder">Реклама — блок №6</div>
         </div>
 
-        <p class="final-more">Доп. текст: советы, рекомендации</p>
-
         <div class="ad ad-recs" id="ad-7">
-          <div class="ad-placeholder">Реклама — блок №7 (recommendations)</div>
+          <div class="ad-placeholder">Реклама — блок №7</div>
         </div>
 
         <div class="actions">
@@ -171,18 +151,17 @@
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
       <div class="container footer-inner">
         <nav class="footer-links">
-          <a href="#" id="policy-link">Политика конфиденциальности</a>
-          <a href="#" id="contacts-link">Контакты</a>
-          <a href="#" id="offer-link">Оферта</a>
+          <a href="#">Политика</a>
+          <a href="#">Контакты</a>
+          <a href="#">Оферта</a>
         </nav>
       </div>
     </footer>
-  </main>
 
+  </main>
   <script src="script.js" defer></script>
 </body>
 </html>
