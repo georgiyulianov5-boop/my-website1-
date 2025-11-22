@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Поменяй свой знак зодиака</title>
   <meta name="description" content="Заполни данные и крути колесо судьбы — узнай новый знак зодиака." />
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <!-- Analytics / AdSense placeholders:
-       Вставляй сюда код Google Analytics / AdSense если требуется после публикации -->
 </head>
 <body>
   <main id="app" class="page">
+    <!-- Stars background -->
+    <div class="stars" id="stars" aria-hidden="true"></div>
+
     <!-- Hero / Screen 1 -->
     <section class="screen hero active" id="screen-hero">
-      <div class="stars" aria-hidden="true"></div>
       <div class="container">
         <h1 class="title">Поменяй свой знак зодиака</h1>
         <p class="subtitle">Заполни данные и крути колесо судьбы</p>
@@ -68,7 +67,6 @@
 
         <div class="actions">
           <button class="btn btn-primary" id="start-wheel">ГОТОВО</button>
-          <button class="btn btn-ghost" id="back-hero">Назад</button>
         </div>
       </div>
     </section>
@@ -79,11 +77,14 @@
         <div class="wheel-wrap card">
           <p class="hint">Свайпни или нажми для вращения</p>
 
-          <div class="wheel-viewport" id="wheel-viewport">
-            <div class="wheel-track" id="wheel-track" role="list" aria-label="Колесо знаков">
-              <!-- items will be injected by JS -->
+          <div class="wheel-viewport" id="wheel-viewport" role="application" aria-label="Колесо знаков">
+            <div class="wheel-track" id="wheel-track" role="list" aria-hidden="false">
+              <!-- items injected by JS -->
             </div>
             <div class="wheel-center-pointer" aria-hidden="true">▼</div>
+            <!-- arc mask for soft edges -->
+            <div class="wheel-mask-left" aria-hidden="true"></div>
+            <div class="wheel-mask-right" aria-hidden="true"></div>
           </div>
 
           <div class="ad ad-wide" id="ad-3">
@@ -94,7 +95,6 @@
 
         <div class="actions">
           <button class="btn btn-primary" id="spin-btn">Крутить</button>
-          <button class="btn btn-ghost" id="back-form">Изменить данные</button>
         </div>
       </div>
     </section>
