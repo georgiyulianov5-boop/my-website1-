@@ -1,5 +1,5 @@
 // script.js
-// Клиентская логика: переходы экранов, валидация, колесо (псевдо-рандом) и результаты.
+// Полностью переработанная логика вращения/интерфейса + динамические звёзды
 
 // ====== Конфигурация знаков ======
 const ZODIACS = [
@@ -17,7 +17,7 @@ const ZODIACS = [
   { key: "Pisces", name: "Рыбы",       symbol: "♓", desc: "Мечтательный, эмпатичный, креативный." }
 ];
 
-// ====== UI элементы ======
+// ====== DOM элементы ======
 const screens = {
   hero: document.getElementById('screen-hero'),
   form: document.getElementById('screen-form'),
@@ -28,7 +28,6 @@ const screens = {
 };
 
 const toFormBtn = document.getElementById('to-form');
-const backHeroBtn = document.getElementById('back-hero');
 const startWheelBtn = document.getElementById('start-wheel');
 const spinBtn = document.getElementById('spin-btn');
 const repeatYesBtn = document.getElementById('repeat-yes');
@@ -40,6 +39,8 @@ const inputBdate = document.getElementById('input-bdate');
 const inputZodiac = document.getElementById('input-zodiac');
 
 const wheelTrack = document.getElementById('wheel-track');
+const wheelViewport = document.getElementById('wheel-viewport');
+
 const resultNameEl = document.getElementById('result-name');
 const resultSignEl = document.getElementById('result-sign');
 const resultZodiacEl = document.getElementById('result-zodiac');
@@ -50,158 +51,17 @@ const finalSign = document.getElementById('final-sign');
 const finalZodiac = document.getElementById('final-zodiac');
 const finalDesc = document.getElementById('final-desc');
 
-// ====== Навигация экранов ======
+// ====== Навигация ======
 function show(screen){
   Object.values(screens).forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// Начальное состояние
 show(screens.hero);
 
-// кнопки переходов
-toFormBtn.addEventListener('click', () => show(screens.form));
-backHeroBtn.addEventListener('click', () => show(screens.hero));
-document.getElementById('back-form').addEventListener('click', () => show(screens.form));
-
-// === Инициализация колеса: добавим элементы ===
-function populateWheel(){
-  wheelTrack.innerHTML = '';
-  // Чтобы создать эффект бесконечного трека — добавим дважды список
-  const fullList = [...ZODIACS, ...ZODIACS, ...ZODIACS];
-  fullList.forEach((z) => {
-    const it = document.createElement('div');
-    it.className = 'wheel-item';
-    it.setAttribute('data-key', z.key);
-    it.innerHTML = `<div class="z-symbol">${z.symbol}</div><div class="z-name">${z.name}</div>`;
-    wheelTrack.appendChild(it);
-  });
-}
-populateWheel();
-
-// ====== Простая валидaция даты dd.mm.yyyy ======
-function validDate(str){
-  if(!str) return false;
-  const m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-  if(!m) return false;
-  const d = +m[1], mo = +m[2], y = +m[3];
-  if(mo<1||mo>12) return false;
-  const mdays = [31, (y%4===0 && y%100!==0)||y%400===0?29:28,31,30,31,30,31,31,30,31,30,31];
-  if(d<1||d>mdays[mo-1]) return false;
-  return true;
-}
-
-// функция для псевдо-рандомного выбора индекса (0..11)
-function randomZodiacIndex(){
-  return Math.floor(Math.random()*ZODIACS.length);
-}
-
-// смещение трека так, чтобы выбранный знак оказался в центре viewport
-function scrollToSign(centerIndex, animate=true){
-  // каждый элемент ширина + gap прибл. (используем DOM)
-  const items = wheelTrack.querySelectorAll('.wheel-item');
-  if(!items.length) return;
-  const containerWidth = wheelTrack.parentElement.clientWidth;
-  const item = items[centerIndex];
-  const itemRect = item.getBoundingClientRect();
-  const trackRect = wheelTrack.getBoundingClientRect();
-  // вычислим текущ transform
-  const itemCenter = (itemRect.left - trackRect.left) + itemRect.width/2;
-  const desired = (wheelTrack.scrollWidth/2 - containerWidth/2); // not used
-  // простая версия: смещаем transform так, чтобы центр выбранного элемента совпал с центром viewport
-  const currentTransform = getComputedStyle(wheelTrack).transform;
-  // compute offset:
-  const trackLeft = wheelTrack.getBoundingClientRect().left;
-  const viewportCenter = wheelTrack.parentElement.getBoundingClientRect().left + containerWidth/2;
-  const shift = (viewportCenter - (itemRect.left + itemRect.width/2));
-  // применим translateX
-  const prev = wheelTrack._tx || 0;
-  const newtx = prev + shift;
-  wheelTrack._tx = newtx;
-  if(animate){
-    wheelTrack.style.transition = 'transform 2.8s cubic-bezier(.22,.9,.35,1)';
-  } else {
-    wheelTrack.style.transition = 'none';
-  }
-  wheelTrack.style.transform = `translateX(${newtx}px)`;
-}
-
-// ====== Основная логика вращения (псевдо-рандом) ======
-function doSpin(oneTime=true){
-  show(screens.spin);
-  // небольшой таймаут для плавности перехода
-  setTimeout(() => {
-    // выбираем случайный знак (0..11)
-    const idx = randomZodiacIndex();
-    // из-за тройного повторения в populateWheel возьмем центральный диапазон
-    // central block offset:
-    const base = ZODIACS.length; // 12
-    const targetIndex = base + idx; // в середине трека
-    // вычисляем конечный translate: мы используем scrollToSign, но оно считает смещение от текущего положения
-    // Для стабильности — установим стартовую позицию так, чтобы центр трека показывал первый элемент блока base
-    // Сброс transform и выставление стартовой позиции:
-    wheelTrack.style.transition = 'none';
-    wheelTrack.style.transform = 'translateX(0px)';
-    wheelTrack._tx = 0;
-
-    // небольшая задержка перед анимацией
-    setTimeout(() => {
-      // вращение: эффект ускорение -> равномерно -> замедление
-      // длительность "внешней анимации" 6 секунд
-      // Для ощущения — мы сначала сдвинем трек на несколько кругов, затем подберём центр на targetIndex
-      // вычислим длину одного шага:
-      const items = wheelTrack.querySelectorAll('.wheel-item');
-      const perItemWidth = items[0].getBoundingClientRect().width + 12; // margin gap ~12
-      // количество шагов: несколько кругов (например, 3 круга) + поход к targetIndex
-      const totalSteps = (ZODIACS.length * 3) + idx;
-      const totalShift = - totalSteps * perItemWidth;
-      // анимируем transform вручную (плавное easing)
-      const duration = 6000; // 6s
-      const start = performance.now();
-      const from = wheelTrack._tx || 0;
-      const to = from + totalShift;
-      function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
-      function frame(now){
-        const t = Math.min(1, (now - start)/duration);
-        const eased = easeOutCubic(t);
-        const cur = from + (to - from) * eased;
-        wheelTrack.style.transform = `translateX(${cur}px)`;
-        wheelTrack._tx = cur;
-        if(t < 1){
-          requestAnimationFrame(frame);
-        } else {
-          // закончили — покажем результат
-          const chosen = ZODIACS[idx];
-          showResult(chosen);
-        }
-      }
-      requestAnimationFrame(frame);
-    }, 120);
-  }, 300);
-}
-
-// ====== Показать результат ======
-function showResult(z){
-  // персонализация
-  const name = inputName.value.trim() || 'Друже';
-  resultNameEl.textContent = name;
-  resultSignEl.textContent = z.symbol;
-  resultZodiacEl.textContent = z.name;
-  resultDescEl.textContent = z.desc;
-
-  // final screen data
-  finalName.textContent = name;
-  finalSign.textContent = z.symbol;
-  finalZodiac.textContent = z.name;
-  finalDesc.textContent = z.desc;
-
-  show(screens.result);
-}
-
-// ====== Прослушка кнопок ======
-startWheelBtn.addEventListener('click', () => {
-  // валидация
+// события навигации
+toFormBtn.addEventListener('click', ()=> show(screens.form));
+startWheelBtn.addEventListener('click', ()=> {
   const name = inputName.value.trim();
   const bdate = inputBdate.value.trim();
   if(!name){
@@ -214,51 +74,216 @@ startWheelBtn.addEventListener('click', () => {
     inputBdate.focus();
     return;
   }
-  // идём к экрану колеса
   show(screens.wheel);
 });
 
-spinBtn.addEventListener('click', () => {
-  doSpin();
-});
-
-repeatYesBtn.addEventListener('click', () => {
-  // повтор — вернёмся на экран wheel и запустим spin
+// повтор и финал
+repeatYesBtn.addEventListener('click', ()=> {
   show(screens.wheel);
-  setTimeout(() => doSpin(), 300);
+  setTimeout(()=> startSpin(), 250);
 });
-
-repeatNoBtn.addEventListener('click', () => {
-  // финальный экран
-  show(screens.final);
-});
-
-finalBackBtn.addEventListener('click', () => {
-  // возвращаемся на главный экран
+repeatNoBtn.addEventListener('click', ()=> show(screens.final));
+finalBackBtn.addEventListener('click', ()=> {
   show(screens.hero);
-  // сброс полей при желании:
+  // сбросим поля и трек
   inputName.value = '';
   inputBdate.value = '';
   inputZodiac.value = '';
-  // reset wheel transform
   wheelTrack.style.transform = 'translateX(0px)';
   wheelTrack._tx = 0;
 });
 
-// Удобства: enter на полях запускает действие
-[inputName, inputBdate].forEach(el => {
-  el.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') startWheelBtn.click();
+// enter запускает старт
+[inputName, inputBdate].forEach(el => el.addEventListener('keydown', (e)=> {
+  if(e.key === 'Enter') startWheelBtn.click();
+}));
+
+// ====== Создание звёзд на фоне ======
+(function createStars(){
+  const starContainer = document.getElementById('stars');
+  if(!starContainer) return;
+  const COUNT = 48; // не слишком много для мобильных
+  for(let i=0;i<COUNT;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = (Math.random()*3)+1;
+    s.style.width = `${size}px`;
+    s.style.height = `${size}px`;
+    s.style.left = `${Math.random()*100}%`;
+    s.style.top = `${Math.random()*100}%`;
+    s.style.opacity = (Math.random()*0.6)+0.4;
+    const tw = (Math.random()*3)+2;
+    const fy = (Math.random()*6)+6;
+    s.style.animationDuration = `${tw}s, ${fy}s`;
+    starContainer.appendChild(s);
+  }
+})();
+
+// ====== Инициализация колеса (три повторения для плавного прокручивания) ======
+function populateWheel(){
+  wheelTrack.innerHTML = '';
+  const full = [...ZODIACS, ...ZODIACS, ...ZODIACS];
+  full.forEach(z => {
+    const it = document.createElement('div');
+    it.className = 'wheel-item';
+    it.setAttribute('data-key', z.key);
+    it.innerHTML = `<div class="z-symbol">${z.symbol}</div><div class="z-name">${z.name}</div>`;
+    wheelTrack.appendChild(it);
   });
+  // начальное состояние
+  wheelTrack._tx = 0;
+  wheelTrack.style.transform = 'translateX(0px)';
+  // give small delay to ensure layout
+  setTimeout(()=> updateItemTransforms(), 30);
+}
+populateWheel();
+
+// ====== Валидация даты dd.mm.yyyy ======
+function validDate(str){
+  if(!str) return false;
+  const m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(!m) return false;
+  const d = +m[1], mo = +m[2], y = +m[3];
+  if(mo<1||mo>12) return false;
+  const mdays = [31, (y%4===0 && y%100!==0)||y%400===0?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(d<1||d>mdays[mo-1]) return false;
+  return true;
+}
+
+// ====== Spin logic (псевдо-рандом) ======
+let spinning = false;
+
+function randomZodiacIndex(){
+  return Math.floor(Math.random() * ZODIACS.length);
+}
+
+function startSpin(){
+  if(spinning) return;
+  spinning = true;
+  // визуальный экран спина
+  show(screens.spin);
+  setTimeout(()=> {
+    const idx = randomZodiacIndex(); // 0..11
+    // целевой индекс внутри трека (средний блок)
+    const base = ZODIACS.length;
+    const targetIndex = base + idx;
+    const items = wheelTrack.querySelectorAll('.wheel-item');
+    if(!items.length){
+      spinning = false;
+      show(screens.wheel);
+      return;
+    }
+    // рассчёт ширины шага
+    const itemRect = items[0].getBoundingClientRect();
+    const cs = getComputedStyle(items[0]);
+    const marginL = parseFloat(cs.marginLeft) || 0;
+    const marginR = parseFloat(cs.marginRight) || 0;
+    const perStep = itemRect.width + marginL + marginR;
+
+    // позиции
+    const containerWidth = wheelTrack.parentElement.clientWidth;
+    const item = items[targetIndex];
+    const itemOffsetLeft = item.offsetLeft; // relative to wheelTrack
+    const itemCenter = itemOffsetLeft + item.offsetWidth/2;
+
+    // хотим несколько полных кругов + остановить на targetIndex в центре
+    const rounds = 3;
+    const roundWidth = perStep * ZODIACS.length;
+    const finalTx = - (rounds * roundWidth + (itemCenter - containerWidth/2));
+
+    // animate from current to finalTx
+    const from = wheelTrack._tx || 0;
+    const to = finalTx;
+    const duration = 6000;
+    const start = performance.now();
+    function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+
+    function frame(now){
+      const t = Math.min(1, (now - start)/duration);
+      const eased = easeOutCubic(t);
+      const cur = from + (to - from) * eased;
+      wheelTrack.style.transform = `translateX(${cur}px)`;
+      wheelTrack._tx = cur;
+      // update item transforms (scale/translate) для иллюзии дуги
+      updateItemTransforms();
+      if(t < 1){
+        requestAnimationFrame(frame);
+      } else {
+        // закончили
+        const chosen = ZODIACS[idx];
+        spinning = false;
+        // небольшой интервал, чтобы не резать переход сразу
+        setTimeout(()=> showResult(chosen), 250);
+      }
+    }
+    requestAnimationFrame(frame);
+  }, 250);
+}
+
+// переход к результату (заполняем текст)
+function showResult(z){
+  const name = inputName.value.trim() || 'Друже';
+  resultNameEl.textContent = name;
+  resultSignEl.textContent = z.symbol;
+  resultZodiacEl.textContent = z.name;
+  resultDescEl.textContent = z.desc;
+
+  finalName.textContent = name;
+  finalSign.textContent = z.symbol;
+  finalZodiac.textContent = z.name;
+  finalDesc.textContent = z.desc;
+
+  show(screens.result);
+}
+
+// Обновление трансформации элементов для эффекта дуги
+function updateItemTransforms(){
+  const items = wheelTrack.querySelectorAll('.wheel-item');
+  const vpRect = wheelTrack.parentElement.getBoundingClientRect();
+  const vpCenter = vpRect.left + vpRect.width/2;
+  items.forEach(it => {
+    const r = it.getBoundingClientRect();
+    const itemCenter = r.left + r.width/2;
+    const dist = Math.abs(vpCenter - itemCenter);
+    const norm = Math.min(1, dist / (vpRect.width * 0.6)); // 0..1
+    const scale = 1 + (1 - norm) * 0.18; // ближе к центру — чуть больше
+    const translateY = - (1 - norm) * 10; // поднимаем центр
+    it.style.transform = `translateY(${translateY}px) scale(${scale})`;
+    it.style.zIndex = Math.floor((1 - norm) * 100);
+  });
+}
+
+// ====== Слушатели кнопок/области колеса ======
+document.getElementById('spin-btn').addEventListener('click', startSpin);
+
+// тап/свайп на область колеса запускает spin
+let touchStartX = 0;
+wheelViewport.addEventListener('click', ()=> startSpin());
+wheelViewport.addEventListener('pointerdown', (e)=>{
+  touchStartX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+});
+wheelViewport.addEventListener('pointerup', (e)=>{
+  const ux = e.clientX || (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].clientX) || 0;
+  if(Math.abs(ux - touchStartX) > 20){
+    // свайп — запускаем
+    startSpin();
+  }
 });
 
-/* Примечание по рекламе:
-   - В DOM есть блоки ad-1 ... ad-7 — впиши туда код Google AdSense (или другого провайдера) после публикации.
-   - Не вставляй тестовые/локальные скрипты AdSense на локальном файле: некоторые сети требуют HTTPS и домен.
-*/
+// ====== prevention double click while spinning
+function disableDuringSpin(el){
+  el.addEventListener('click', (ev) => {
+    if(spinning){ ev.stopImmediatePropagation(); ev.preventDefault(); }
+  }, true);
+}
+disableDuringSpin(document.getElementById('spin-btn'));
+disableDuringSpin(wheelViewport);
 
-/* Дополнения/улучшения (по желанию):
-   - Подключить реальные SVG-иконки знаков.
-   - Улучшить физику вращения (использовать canvas или svg).
-   - Интерграция с GA4/AdSense и модальным управлением Cookie.
-*/
+// ====== initialize transforms on resize
+window.addEventListener('resize', ()=> setTimeout(updateItemTransforms, 60));
+
+// ====== динамический запуск: добавим запуск колеса по кнопке spin на первом показе
+// и т.д. (repeat handled above)
+
+// Примечание: места ad-1..ad-7 — оставлены как placeholders.
+// Вставляй код Google AdSense или другой сети уже после деплоя (HTTPS + домен).
