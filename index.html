@@ -1,167 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Поменяй свой знак зодиака</title>
-  <meta name="description" content="Заполни данные и крути колесо судьбы — узнай новый знак зодиака." />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChangeZodiac © 2025</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main id="app" class="page">
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Звёзды поменялись! Какой знак зодиака будет сегодня?</h1>
+  </section>
 
-    <!-- Stars background -->
-    <div class="stars" id="stars" aria-hidden="true"></div>
+  <!-- Инфо-блок -->
+  <section class="info-block">
+    <p>
+      Когда-то люди смотрели на небо как на живую карту судьбы.<br>
+      …Поэтому реальное положение Солнца иногда уже не совпадает с привычными датами.
+    </p>
+  </section>
 
-    <!-- === SCREEN 1: HERO === -->
-    <section class="screen hero active" id="screen-hero">
-      <div class="container">
-        <h1 class="title">Поменяй свой знак зодиака</h1>
-        <p class="subtitle">Заполни данные и крути колесо судьбы</p>
+  <!-- Форма ввода -->
+  <section class="form-section">
+    <form id="userForm">
+      <label>Имя:
+        <input type="text" id="name" required>
+      </label>
+      <label>Дата рождения:
+        <input type="date" id="birthdate" required>
+      </label>
+      <label>Знак зодиака:
+        <input type="text" id="zodiac" readonly placeholder="Автозаполнение">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="agree" required>
+        Я согласен с <a href="#">политикой обработки данных</a> и <a href="#">пользовательским соглашением</a>.
+      </label>
+      <button type="submit">Продолжить</button>
+    </form>
+  </section>
 
-        <div class="ad ad-small" id="ad-1">
-          <div class="ad-placeholder">Реклама — блок №1</div>
-        </div>
+  <!-- Колесо-рулетка -->
+  <section class="wheel-section">
+    <div class="wheel-container">
+      <canvas id="wheel" width="500" height="500"></canvas>
+      <button id="spinBtn">Вращать</button>
+      <p>Осталось попыток сегодня: <span id="tries">2</span></p>
+    </div>
+  </section>
 
-        <button class="btn btn-primary btn-cta" id="to-form">Начать</button>
-      </div>
-    </section>
+  <!-- Результат -->
+  <section class="result-section hidden" id="result">
+    <div class="result-card">
+      <p><span id="userName"></span>, ваш знак зодиака на сегодня: <strong id="userZodiac"></strong></p>
+      <img id="zodiacIcon" src="" alt="Иконка знака">
+      <button id="retryBtn">Попробовать ещё раз</button>
+    </div>
+  </section>
 
-    <!-- === SCREEN 2: FORM === -->
-    <section class="screen form-screen" id="screen-form">
-      <div class="container card">
-        <label class="field">
-          <span class="label-text">Имя</span>
-          <input type="text" id="input-name" placeholder="Как тебя зовут" maxlength="30" />
-        </label>
+  <!-- Футер -->
+  <footer>
+    <p>Контакты: mail@gmail.com</p>
+    <p>
+      <a href="#">Пользовательское соглашение</a> |
+      <a href="#">Политика конфиденциальности</a>
+    </p>
+    <p>Changezodiac © 2025. Все права защищены.</p>
+  </footer>
 
-        <label class="field">
-          <span class="label-text">Дата рождения</span>
-          <input type="text" id="input-bdate" placeholder="dd.mm.yyyy" inputmode="numeric" />
-        </label>
-
-        <label class="field">
-          <span class="label-text">Знак зодиака</span>
-          <select id="input-zodiac">
-            <option value="">(автоопределить)</option>
-            <option value="Aries">Овен</option>
-            <option value="Taurus">Телец</option>
-            <option value="Gemini">Близнецы</option>
-            <option value="Cancer">Рак</option>
-            <option value="Leo">Лев</option>
-            <option value="Virgo">Дева</option>
-            <option value="Libra">Весы</option>
-            <option value="Scorpio">Скорпион</option>
-            <option value="Sagittarius">Стрелец</option>
-            <option value="Capricorn">Козерог</option>
-            <option value="Aquarius">Водолей</option>
-            <option value="Pisces">Рыбы</option>
-          </select>
-        </label>
-
-        <div class="ad ad-small" id="ad-2">
-          <div class="ad-placeholder">Реклама — блок №2</div>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="start-wheel">ГОТОВО</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- === SCREEN 3: WHEEL (with animation ON SAME SCREEN) === -->
-    <section class="screen wheel-screen" id="screen-wheel">
-      <div class="container">
-        <div class="wheel-wrap card">
-          <p class="hint">Свайпни или нажми для вращения</p>
-
-          <div class="wheel-viewport" id="wheel-viewport">
-            <div class="wheel-track" id="wheel-track"></div>
-            <div class="wheel-center-pointer">▼</div>
-            <div class="wheel-mask-left"></div>
-            <div class="wheel-mask-right"></div>
-          </div>
-
-          <div class="ad ad-wide" id="ad-3">
-            <div class="ad-placeholder">Реклама — блок №3</div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="spin-btn">Крутить</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- === SCREEN 5: RESULT === -->
-    <section class="screen result-screen" id="screen-result">
-      <div class="container card result-card">
-        <h2 class="result-name" id="result-name">Имя</h2>
-
-        <div class="result-top">
-          <div class="result-sign" id="result-sign">♈</div>
-          <div class="result-title">Ваш новый знак зодиака:</div>
-          <div class="result-zodiac" id="result-zodiac">Овен</div>
-        </div>
-
-        <p class="result-desc" id="result-desc"></p>
-
-        <div class="ad ad-inline" id="ad-4">
-          <div class="ad-placeholder">Реклама — блок №4</div>
-        </div>
-
-        <div class="ask-repeat">
-          <p class="question">Хотите испытать удачу ещё раз?</p>
-
-          <div class="ad ad-small" id="ad-5">
-            <div class="ad-placeholder">Реклама — блок №5</div>
-          </div>
-
-          <div class="repeat-actions">
-            <button class="btn btn-primary" id="repeat-yes">ДА</button>
-            <button class="btn btn-ghost" id="repeat-no">НЕТ</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- === SCREEN 6: FINAL === -->
-    <section class="screen final-screen" id="screen-final">
-      <div class="container card final-card">
-        <h2 id="final-name">Пока!</h2>
-
-        <div id="final-block">
-          <div class="final-sign" id="final-sign">♈</div>
-          <div class="final-zodiac" id="final-zodiac">Овен</div>
-          <p id="final-desc"></p>
-        </div>
-
-        <div class="ad ad-inline" id="ad-6">
-          <div class="ad-placeholder">Реклама — блок №6</div>
-        </div>
-
-        <div class="ad ad-recs" id="ad-7">
-          <div class="ad-placeholder">Реклама — блок №7</div>
-        </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" id="final-back">На главную</button>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="container footer-inner">
-        <nav class="footer-links">
-          <a href="#">Политика</a>
-          <a href="#">Контакты</a>
-          <a href="#">Оферта</a>
-        </nav>
-      </div>
-    </footer>
-
-  </main>
-  <script src="script.js" defer></script>
+  <script src="script.js"></script>
 </body>
 </html>
