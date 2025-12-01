@@ -1,380 +1,119 @@
-/* -------------------------------------------------------
-   GLOBAL RESET & BASE
-------------------------------------------------------- */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  min-height: 100%;
-  background: #0A0A14;
-  color: #FFFFFF;
-  font-family: "Inter", sans-serif;
+/* Общие сбросы */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', sans-serif;
+  color: #D9D9E3;
+  background: linear-gradient(135deg, #0A0A14, #121225);
   overflow-x: hidden;
 }
 
-body {
-  background: radial-gradient(circle at 50% 0%, #121225, #0A0A14 70%);
-}
-
-/* Stars background */
-.stars {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: radial-gradient(#ffffff44 1px, transparent 1px);
-  background-size: 3px 3px;
-  opacity: 0.25;
-  animation: starsMove 40s linear infinite;
-}
-
-@keyframes starsMove {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-200px); }
-}
-
-/* General Layout */
-.page {
-  position: relative;
-  z-index: 2;
-}
-
-.container {
-  width: 100%;
-  padding: 20px;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-.card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid #FFFFFF22;
-  border-radius: 16px;
-  padding: 20px;
-  backdrop-filter: blur(6px);
-  box-shadow: 0 0 20px #00000055;
-}
-
-/* Screens */
-.screen {
-  display: none;
-  padding-top: 30px;
-  padding-bottom: 60px;
-}
-
-.screen.active {
-  display: block;
-}
-
-/* -------------------------------------------------------
-   TEXT
-------------------------------------------------------- */
-
-.title {
-  font-family: "Playfair Display", serif;
-  font-size: 30px;
-  text-align: center;
-  color: #fff;
-  text-shadow: 0 0 12px #E8C67A88;
-  margin-bottom: 14px;
-}
-
-.subtitle {
-  text-align: center;
-  font-size: 17px;
-  color: #D9D9E3;
-  opacity: 0.8;
-  margin-bottom: 22px;
-}
-
-.label-text {
-  display: block;
-  font-size: 15px;
-  color: #D9D9E3;
-  margin-bottom: 6px;
-}
-
-/* -------------------------------------------------------
-   FORM FIELDS
-------------------------------------------------------- */
-
-.field {
-  margin-bottom: 20px;
-}
-
-input, select {
-  width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  color: #FFFFFF;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid #FFFFFF33;
-  border-radius: 14px;
-  outline: none;
-  font-family: inherit;
-}
-
-input:focus, select:focus {
-  border-color: #E8C67A;
-  box-shadow: 0 0 6px #E8C67A55;
-}
-
-/* -------------------------------------------------------
-   BUTTONS
-------------------------------------------------------- */
-
-.btn {
-  display: inline-block;
-  width: 100%;
-  padding: 14px 20px;
-  font-size: 18px;
-  text-align: center;
-  border-radius: 18px;
-  cursor: pointer;
-  border: none;
-  transition: 0.25s;
-  font-weight: 600;
-}
-
-.btn-primary {
-  background-color: #E8C67A;
-  color: #121225;
-  box-shadow: 0 0 12px #E8C67A55;
-}
-
-.btn-primary:hover {
-  background-color: #f0d891;
-}
-
-.btn-ghost {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid #FFFFFF33;
-  color: #fff;
-}
-
-.btn-ghost:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-.actions {
-  margin-top: 25px;
-}
-
-/* -------------------------------------------------------
-   AD BLOCKS
-------------------------------------------------------- */
-
-.ad {
-  background: rgba(255,255,255,0.03);
-  border: 1px dashed #FFFFFF33;
-  border-radius: 12px;
-  margin: 18px 0;
-  padding: 10px;
-  text-align: center;
-  font-size: 13px;
-  color: #aaa;
-}
-
-.ad-placeholder {
-  opacity: 0.7;
-  font-size: 13px;
-}
-
-.ad-small { height: 60px; }
-.ad-wide  { height: 90px; }
-.ad-inline { height: 80px; }
-.ad-recs   { height: 140px; }
-
-/* -------------------------------------------------------
-   WHEEL UI
-------------------------------------------------------- */
-
-.wheel-viewport {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  height: 140px;
-  margin: 20px 0 35px;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid #FFFFFF22;
-}
-
-.wheel-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+/* Hero */
+.hero {
+  height: 60vh;
   display: flex;
-  transition: transform 0.4s ease;
-}
-
-.wheel-item {
-  min-width: 90px;
-  height: 100%;
-  text-align: center;
-  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  background: inherit;
+  position: relative;
+  text-align: center;
+}
+.hero::after {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: transparent url('assets/images/stars.png') repeat;
+  opacity: 0.1;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #FFFFFF;
+  text-shadow: 0 0 8px rgba(232,198,122,0.8);
+}
+
+/* Инфо-блок */
+.info-block {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+/* Форма */
+.form-section {
+  margin: 20px auto;
+  max-width: 400px;
+}
+.form-section form {
   display: flex;
-  color: #fff;
-  margin: 0 8px;
-  font-size: 16px;
+  flex-direction: column;
+  gap: 15px;
+}
+.form-section input[type="text"],
+.form-section input[type="date"] {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 14px;
+  padding: 10px;
+  color: #FFFFFF;
+}
+.form-section input:focus {
+  outline: none;
+  border-bottom: 2px solid #E8C67A;
+}
+.form-section button {
+  background: #E8C67A;
+  color: #121225;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
 }
 
-.wheel-item .z-symbol {
-  font-size: 32px;
-  margin-bottom: 6px;
-  text-shadow: 0 0 8px #E8C67A55;
-}
-
-.wheel-center-pointer {
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 22px;
-  color: #E8C67A;
-  text-shadow: 0 0 10px #E8C67A88;
-}
-
-/* SIDE MASKS for arc effect */
-.wheel-mask-left,
-.wheel-mask-right {
-  position: absolute;
-  top: 0;
-  width: 25%;
-  height: 100%;
-  pointer-events: none;
-  background: linear-gradient(to right, #0A0A14ff, transparent);
-  z-index: 9;
-}
-
-.wheel-mask-right {
-  right: 0;
-  background: linear-gradient(to left, #0A0A14ff, transparent);
-}
-
-.hint {
+/* Колесо */
+.wheel-section {
   text-align: center;
-  font-size: 14px;
-  opacity: 0.7;
-  margin-bottom: 10px;
+  margin: 30px 0;
 }
-
-/* -------------------------------------------------------
-   RESULT SCREEN
-------------------------------------------------------- */
-
-.result-card {
-  text-align: center;
+.wheel-container {
+  position: relative;
+  display: inline-block;
 }
-
-.result-name {
-  font-size: 24px;
-  margin-bottom: 18px;
-  font-family: "Playfair Display";
-  text-shadow: 0 0 8px #ffffff55;
-}
-
-.result-top {
-  margin-bottom: 22px;
-}
-
-.result-sign {
-  font-size: 48px;
-  margin-bottom: 8px;
-  text-shadow: 0 0 12px #E8C67A88;
-}
-
-.result-title {
-  font-size: 16px;
-  opacity: 0.8;
-}
-
-.result-zodiac {
-  font-size: 22px;
-  margin-top: 6px;
-  text-shadow: 0 0 6px #E8C67A55;
-}
-
-.result-desc {
-  margin: 20px 0;
-  line-height: 1.45;
-  color: #D9D9E3;
-}
-
-/* -------------------------------------------------------
-   REPEAT BLOCK
-------------------------------------------------------- */
-
-.ask-repeat {
-  margin-top: 32px;
-}
-
-.question {
-  font-size: 18px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.repeat-actions {
-  display: flex;
-  gap: 12px;
+#wheel { border-radius: 50%; }
+#spinBtn {
   margin-top: 10px;
+  background: #8FB2FF;
+  color: #121225;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
 }
 
-.repeat-actions .btn {
-  flex: 1;
+/* Результат */
+.result-section {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
 }
-
-/* -------------------------------------------------------
-   FINAL SCREEN
-------------------------------------------------------- */
-
-.final-sign {
-  font-size: 52px;
+.result-card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 14px;
   text-align: center;
-  margin-bottom: 10px;
-  color: #E8C67A;
-  text-shadow: 0 0 12px #E8C67A88;
 }
+.result-card img { width: 80px; margin: 10px 0; }
+.hidden { display: none; }
 
-.final-zodiac {
-  font-size: 22px;
+/* Футер */
+footer {
   text-align: center;
-  margin-bottom: 16px;
-}
-
-.final-card p {
-  text-align: center;
-  color: #D9D9E3;
-  line-height: 1.45;
-}
-
-/* -------------------------------------------------------
-   FOOTER
-------------------------------------------------------- */
-
-.footer {
-  width: 100%;
-  padding: 30px 0;
-  text-align: center;
-  opacity: 0.7;
-}
-
-.footer-links a {
-  color: #fff;
-  opacity: 0.7;
-  margin: 0 10px;
+  padding: 20px;
+  color: rgba(255,255,255,0.7);
   font-size: 14px;
-  text-decoration: none;
 }
-
-.footer-links a:hover {
-  opacity: 1;
-}
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
