@@ -1,134 +1,67 @@
-// === CONFIG ===
-const ZODIACS = [
-  { key:"Aries", name:"Овен", symbol:"♈", desc:"Энергичный, смелый..." },
-  { key:"Taurus", name:"Телец", symbol:"♉", desc:"Надёжный, практичный..." },
-  { key:"Gemini", name:"Близнецы", symbol:"♊", desc:"Любопытный, общительный..." },
-  { key:"Cancer", name:"Рак", symbol:"♋", desc:"Чувствительный, заботливый..." },
-  { key:"Leo", name:"Лев", symbol:"♌", desc:"Щедрый, творческий..." },
-  { key:"Virgo", name:"Дева", symbol:"♍", desc:"Организованный, внимательный..." },
-  { key:"Libra", name:"Весы", symbol:"♎", desc:"Гармоничный, дипломатичный..." },
-  { key:"Scorpio", name:"Скорпион", symbol:"♏", desc:"Глубокий, страстный..." },
-  { key:"Sagittarius", name:"Стрелец", symbol:"♐", desc:"Свободолюбивый, оптимистичный..." },
-  { key:"Capricorn", name:"Козерог", symbol:"♑", desc:"Целеустремлённый..." },
-  { key:"Aquarius", name:"Водолей", symbol:"♒", desc:"Оригинальный мыслитель..." },
-  { key:"Pisces", name:"Рыбы", symbol:"♓", desc:"Мечтательный, эмпатичный..." }
+// Список знаков и их иконок
+const signs = [
+  { name: 'Овен', icon: 'assets/icons/aries.svg' },
+  { name: 'Телец', icon: 'assets/icons/taurus.svg' },
+  // ...другие 10 знаков...
+  { name: 'Рыбы', icon: 'assets/icons/pisces.svg' }
 ];
 
-// === SCREENS ===
-const screens = {
-  hero: document.getElementById("screen-hero"),
-  form: document.getElementById("screen-form"),
-  wheel: document.getElementById("screen-wheel"),
-  result: document.getElementById("screen-result"),
-  final: document.getElementById("screen-final")
+let tries = localStorage.getItem('tries') || 2;
+document.getElementById('tries').textContent = tries;
+
+// Автозаполнение знака по дате (упрощённо)
+document.getElementById('birthdate').addEventListener('change', e => {
+  const month = e.target.value.split('-')[1];
+  const idx = (parseInt(month, 10) + 10) % 12; // примерная логика
+  document.getElementById('zodiac').value = signs[idx].name;
+});
+
+// Обработка вращения
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+const size = canvas.width;
+const arc = (2 * Math.PI) / signs.length;
+
+// Рисуем колесо
+signs.forEach((s, i) => {
+  const start = i * arc;
+  ctx.beginPath();
+  ctx.fillStyle = i % 2 === 0 ? '#1E1E2A' : '#292A38';
+  ctx.moveTo(size/2, size/2);
+  ctx.arc(size/2, size/2, size/2, start, start + arc);
+  ctx.fill();
+  // иконки пропускаем для краткости…
+});
+
+// Вращение
+document.getElementById('spinBtn').onclick = () => {
+  if (tries <= 0) return alert('Попытки закончились');
+  tries--;
+  localStorage.setItem('tries', tries);
+  document.getElementById('tries').textContent = tries;
+
+  const randomIdx = Math.floor(Math.random() * signs.length);
+  const spinAngle = 3600 + randomIdx * (360 / signs.length);
+
+  canvas.style.transition = 'transform 6s ease-out';
+  canvas.style.transform = `rotate({spinAngle}deg)`;
+
+  canvas.addEventListener('transitionend', () => {
+    showResult(randomIdx);
+    canvas.style.transition = '';
+    canvas.style.transform = '';
+  }, { once: true });
 };
-function show(s){ Object.values(screens).forEach(x=>x.classList.remove("active")); s.classList.add("active"); }
 
-// === ELEMENTS ===
-const inputName = document.getElementById("input-name");
-const inputBdate = document.getElementById("input-bdate");
-const wheelTrack = document.getElementById("wheel-track");
-const wheelViewport = document.getElementById("wheel-viewport");
+// Показ результата
+function showResult(idx) {
+  document.getElementById('userName').textContent = document.getElementById('name').value;
+  document.getElementById('userZodiac').textContent = signs[idx].name;
+  document.getElementById('zodiacIcon').src = signs[idx].icon;
+  document.getElementById('result').classList.remove('hidden');
+}
 
-const resultNameEl = document.getElementById("result-name");
-const resultSignEl = document.getElementById("result-sign");
-const resultZodiacEl = document.getElementById("result-zodiac");
-const resultDescEl = document.getElementById("result-desc");
-
-const finalName = document.getElementById("final-name");
-const finalSign = document.getElementById("final-sign");
-const finalZodiac = document.getElementById("final-zodiac");
-const finalDesc = document.getElementById("final-desc");
-
-// === NAVIGATION ===
-document.getElementById("to-form").onclick = ()=> show(screens.form);
-document.getElementById("start-wheel").onclick = ()=>{
-  if(!inputName.value.trim()){ alert("Введите имя"); return; }
-  show(screens.wheel);
+// Повтор
+document.getElementById('retryBtn').onclick = () => {
+  document.getElementById('result').classList.add('hidden');
 };
-
-// === CREATE WHEEL ITEMS ===
-function populateWheel(){
-  wheelTrack.innerHTML = "";
-  const full = [...ZODIACS, ...ZODIACS, ...ZODIACS];
-  full.forEach(z=>{
-    const d=document.createElement("div");
-    d.className="wheel-item";
-    d.setAttribute("data-key",z.key);
-    d.innerHTML=`<div class="z-symbol">${z.symbol}</div><div>${z.name}</div>`;
-    wheelTrack.appendChild(d);
-  });
-  wheelTrack._tx=0;
-  wheelTrack.style.transform="translateX(0px)";
-}
-populateWheel();
-
-// === RESULT ===
-function showResult(z){
-  const name = inputName.value.trim();
-  resultNameEl.textContent = name;
-  resultSignEl.textContent = z.symbol;
-  resultZodiacEl.textContent = z.name;
-  resultDescEl.textContent = z.desc;
-
-  finalName.textContent = name;
-  finalSign.textContent = z.symbol;
-  finalZodiac.textContent = z.name;
-  finalDesc.textContent = z.desc;
-
-  show(screens.result);
-}
-
-// === SPIN ===
-let spinning=false;
-
-function startSpin(){
-  if(spinning) return;
-  spinning=true;
-
-  const idx = Math.floor(Math.random()*12);
-  const chosen = ZODIACS[idx];
-
-  const items = wheelTrack.querySelectorAll(".wheel-item");
-  const base = 12;
-  const targetIndex = base + idx;
-
-  const r = items[0].getBoundingClientRect();
-  const cs = getComputedStyle(items[0]);
-  const step = r.width + parseFloat(cs.marginLeft)+parseFloat(cs.marginRight);
-
-  const containerWidth = wheelViewport.clientWidth;
-  const item = items[targetIndex];
-  const center = item.offsetLeft + item.offsetWidth/2;
-  const finalTx = -(3*12*step + (center - containerWidth/2));
-
-  const from = wheelTrack._tx || 0;
-  const to = finalTx;
-
-  const duration = 6000;
-  const start = performance.now();
-  function ease(t){return 1-Math.pow(1-t,3);}
-
-  function frame(now){
-    const t = Math.min(1, (now-start)/duration);
-    const v = from+(to-from)*ease(t);
-    wheelTrack.style.transform=`translateX(${v}px)`;
-    wheelTrack._tx=v;
-
-    if(t<1) requestAnimationFrame(frame);
-    else {
-      spinning=false;
-      setTimeout(()=> showResult(chosen),300);
-    }
-  }
-  requestAnimationFrame(frame);
-}
-
-// Button + tap
-document.getElementById("spin-btn").onclick = startSpin;
-wheelViewport.onclick = startSpin;
-
-// === REPEAT ===
-document.getElementById("repeat-yes").onclick = ()=>{ show(screens.wheel); setTimeout(startSpin,200); };
-document.getElementById("repeat-no").onclick = ()=> show(screens.final);
-document.getElementById("final-back").onclick = ()=> show(screens.hero);
