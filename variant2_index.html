@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> ПОМЕНЯТЬ ЗНАК ЗОДИАКА </title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="variant2_styles.css">
+  </head>
+  <body>
+    <!-- Звездный фон -->
+    <div class="stars-bg" id="starsBg"></div>
+
+    <!-- HERO СЕКЦИЯ -->
+    <section class="section hero-section" id="heroSection">
+      <div class="container">
+        <h1 class="hero-title">Листай вниз и узнай свой зодиак на сегодня!</h1>
+        <p class="hero-subtitle"> </p>
+        <div class="scroll-indicator">
+          <span>Прокрутите вниз</span>
+          <div class="scroll-arrow">↓</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ИНФОРМАЦИОННАЯ СЕКЦИЯ -->
+    <section class="section" id="infoSection">
+      <div class="container">
+        <h2 class="section-title"> </h2>
+        <p class="section-description">
+          
+        </p>
+        <div class="info-card">
+          <p class="info-text">
+            Когда-то люди смотрели на небо как на живую карту судьбы. 
+	    В Древней Месопотамии они заметили, что Солнце проходит через двенадцать созвездий, и решили: 
+            каждое может подсказать что‑то о человеке. Позже греки развили эту идею, и так появились знакомые нам 
+            знаки зодиака, которым веками приписывали влияние на характер и жизненный путь.
+            Но за тысячи лет звёзды тихо сместились. Из-за движения земной оси некоторые созвездия оказались не там, 
+            где их видели древние. Поэтому реальное положение Солнца иногда уже не совпадает с привычными датами...
+          </p>
+        </div>
+        <div class="ad-block">
+          <div class="ad-label">Реклама</div>
+          <div class="ad-content">Место для рекламного баннера 728×90</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ИСТОРИЯ СЕКЦИЯ -->
+    <section class="section" id="historySection">
+      <div class="container">
+        <h2 class="section-title">История знаков зодиака</h2>
+        <div class="history-content">
+          <div class="history-card">
+            <div class="history-icon">🌟</div>
+            <h3>Древние времена</h3>
+            <p>
+              Зодиак был создан вавилонскими астрономами более 2500 лет назад
+              как способ отслеживания движения Солнца по небу.
+            </p>
+          </div>
+          <div class="history-card">
+            <div class="history-icon">🔄</div>
+            <h3>Прецессия оси</h3>
+            <p>
+              Земная ось медленно смещается, завершая полный цикл за 26 000 лет.
+              Это изменило положение созвездий относительно дат.
+            </p>
+          </div>
+          <div class="history-card">
+            <div class="history-icon">✨</div>
+            <h3>Современность</h3>
+            <p>
+              Сегодня астрономическое положение созвездий может не соответствовать древним датам знаков зодиака.
+            </p>
+          </div>
+        </div>
+        <div class="ad-block">
+          <div class="ad-label">Реклама</div>
+          <div class="ad-content">Место для рекламного баннера 728×90</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ФОРМА СЕКЦИЯ -->
+    <section class="section" id="formSection">
+      <div class="container">
+        <h2 class="section-title">Расскажите о себе</h2>
+        <p class="section-description">
+          Введите свои данные, чтобы звёзды узнали вас
+        </p>
+        <form class="user-form" id="userForm">
+          <div class="form-group">
+            <label for="userName">Ваше имя</label>
+            <input
+              type="text"
+              id="userName"
+              placeholder="Введите ваше имя"
+              required
+            />
+            <span class="form-error" id="nameError"></span>
+          </div>
+          <div class="form-group">
+            <label for="userBirthdate">Дата рождения</label>
+            <input type="date" id="userBirthdate" required />
+            <span class="form-error" id="birthdateError"></span>
+          </div>
+          <div class="form-group">
+            <label for="userZodiac">Ваш традиционный знак зодиака</label>
+            <select id="userZodiac" required>
+              <option value="">Выберите знак</option>
+              <option value="aries">Овен</option>
+              <option value="taurus">Телец</option>
+              <option value="gemini">Близнецы</option>
+              <option value="cancer">Рак</option>
+              <option value="leo">Лев</option>
+              <option value="virgo">Дева</option>
+              <option value="libra">Весы</option>
+              <option value="scorpio">Скорпион</option>
+              <option value="sagittarius">Стрелец</option>
+              <option value="capricorn">Козерог</option>
+              <option value="aquarius">Водолей</option>
+              <option value="pisces">Рыбы</option>
+            </select>
+            <span class="form-error" id="zodiacError"></span>
+          </div>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="userConsent" required />
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">
+                Я согласен с
+                <a href="#" class="link-gold" onclick="openModal('privacy')"
+                  >политикой конфиденциальности</a
+                >
+                и
+                <a href="#" class="link-gold" onclick="openModal('terms')"
+                  >пользовательским соглашением</a
+                >
+              </span>
+            </label>
+            <span class="form-error" id="consentError"></span>
+          </div>
+          <button type="submit" class="btn-primary">
+            <span class="btn-icon">✨</span>
+            Узнать свой знак
+          </button>
+        </form>
+        <div class="ad-block">
+          <div class="ad-label">Реклама</div>
+          <div class="ad-content">Место для рекламного баннера 728×90</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- КОЛЕСО СЕКЦИЯ -->
+    <section
+      class="section wheel-section"
+      id="wheelSection"
+      style="display: none;"
+    >
+      <div class="container">
+        <h2 class="section-title">Вращайте колесо судьбы</h2>
+        <p class="section-description" id="attemptsText">
+          Осталось попыток: 2
+        </p>
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="600" height="600"></canvas>
+        </div>
+        <div class="wheel-controls">
+          <button class="btn-primary" id="spinBtn" onclick="spinWheel()">
+            <span class="btn-icon">🎡</span>
+            Вращать колесо
+          </button>
+          <button
+            class="btn-primary"
+            id="selectBtn"
+            style="display: none;"
+            onclick="selectZodiac()"
+          >
+            <span class="btn-icon">⭐</span>
+            Выбрать этот знак
+          </button>
+          <button
+            class="btn-secondary"
+            id="retryBtn"
+            style="display: none;"
+            onclick="spinWheel()"
+          >
+            <span class="btn-icon">🔄</span>
+            Попробовать еще раз
+          </button>
+        </div>
+        <div class="ad-block">
+          <div class="ad-label">Реклама</div>
+          <div class="ad-content">Место для рекламного баннера 728×90</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- РЕЗУЛЬТАТ СЕКЦИЯ -->
+    <section class="section" id="resultSection" style="display: none;">
+      <div class="container">
+        <div class="result-card">
+          <div class="result-icon" id="resultIcon">♈</div>
+          <h3 class="result-title">
+            <span id="resultName">Имя</span>, ваш знак зодиака на сегодня:
+          </h3>
+          <h2 class="result-zodiac" id="resultZodiac">Овен</h2>
+          <p class="result-description" id="resultDescription">
+            Сегодня звёзды благосклонны к вам! Овен — знак огня, энергии и новых
+            начинаний.
+          </p>
+          <button class="btn-secondary" onclick="resetApp()">
+            <span class="btn-icon">🔄</span>
+            Попробовать снова
+          </button>
+        </div>
+        <div class="ad-block">
+          <div class="ad-label">Реклама</div>
+          <div class="ad-content">Место для рекламного баннера 728×90</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ФУТЕР -->
+    <footer class="footer">
+      <div class="footer-content">
+        <p class="footer-copyright">
+          © 2025 ChangeZodiac. Все права защищены.
+        </p>
+        <div class="footer-links">
+          <a href="#" onclick="openModal('privacy')"
+            >Политика конфиденциальности</a
+          >
+          <span class="footer-separator">|</span>
+          <a href="#" onclick="openModal('terms')"
+            >Пользовательское соглашение</a
+          >
+          <span class="footer-separator">|</span>
+          <a href="mailto:contact@gmail.com">contact@gmail.com</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- МОДАЛЬНОЕ ОКНО -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Заголовок</h2>
+        <div id="modalBody">Содержимое</div>
+      </div>
+    </div>
+
+    <script src="variant2_script.js"></script>
+  </body>
+</html>
